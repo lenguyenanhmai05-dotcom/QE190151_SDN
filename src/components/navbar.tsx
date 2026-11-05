@@ -28,12 +28,9 @@ export async function Navbar() {
 
           {user ? (
             <div className="flex items-center gap-3 pl-2 border-l border-border">
-              <div className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-secondary/80 border border-secondary text-secondary-foreground text-xs font-semibold">
-                <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+              <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-secondary/80 border border-secondary text-secondary-foreground text-xs font-semibold">
+                <span className="w-2 h-2 rounded-full bg-primary" />
                 <span data-testid="nav-user-name">{user.name || user.email}</span>
-                <span className="text-[10px] uppercase tracking-wider bg-white/80 text-primary px-1.5 py-0.5 rounded font-bold">
-                  {user.role}
-                </span>
               </div>
 
               <form action="/api/auth/logout" method="POST">
