@@ -54,28 +54,31 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex justify-center items-center py-12">
-      <Card className="w-full max-w-md shadow-lg" data-testid="login-card">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold tracking-tight text-center">
-            Sign In
+    <div className="flex justify-center items-center py-10">
+      <Card className="w-full max-w-md shadow-md border-border bg-white" data-testid="login-card">
+        <CardHeader className="space-y-1.5 text-center pb-4">
+          <div className="mx-auto w-10 h-10 rounded-xl bg-secondary flex items-center justify-center text-primary font-black text-xl mb-1">
+            V
+          </div>
+          <CardTitle className="text-2xl font-bold tracking-tight text-foreground">
+            Đăng nhập
           </CardTitle>
-          <CardDescription className="text-center">
-            Enter your credentials to access your account
+          <CardDescription className="text-xs text-muted-foreground">
+            Nhập email và mật khẩu của bạn để vào trang chủ
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             {error && (
               <div
-                className="p-3 text-sm rounded bg-red-50 text-red-600 border border-red-200"
+                className="p-3 text-xs rounded-lg bg-red-50 text-destructive border border-red-200 font-medium"
                 data-testid="error-message"
               >
                 {error}
               </div>
             )}
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+            <div className="space-y-1.5">
+              <Label htmlFor="email" className="text-xs font-semibold text-foreground">Email</Label>
               <Input
                 id="email"
                 name="email"
@@ -85,11 +88,12 @@ export default function LoginPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                className="border-input focus-visible:ring-primary h-10 text-sm"
                 data-testid="email-input"
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+            <div className="space-y-1.5">
+              <Label htmlFor="password" className="text-xs font-semibold text-foreground">Mật khẩu</Label>
               <Input
                 id="password"
                 name="password"
@@ -99,27 +103,28 @@ export default function LoginPage() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                className="border-input focus-visible:ring-primary h-10 text-sm"
                 data-testid="password-input"
               />
             </div>
           </CardContent>
-          <CardFooter className="flex flex-col space-y-4">
+          <CardFooter className="flex flex-col space-y-4 pt-2">
             <Button
               type="submit"
-              className="w-full"
+              className="w-full bg-primary hover:bg-[#8F2620] text-primary-foreground font-semibold shadow-sm h-10"
               disabled={loading}
               data-testid="login-button"
             >
-              {loading ? "Signing in..." : "Sign In"}
+              {loading ? "Đang xử lý..." : "Đăng nhập ngay"}
             </Button>
-            <p className="text-sm text-center text-slate-600">
-              Don&apos;t have an account?{" "}
+            <p className="text-xs text-center text-muted-foreground">
+              Chưa có tài khoản?{" "}
               <Link
                 href="/register"
-                className="text-primary font-medium hover:underline"
+                className="text-primary font-bold hover:underline"
                 data-testid="register-link"
               >
-                Register here
+                Đăng ký tại đây
               </Link>
             </p>
           </CardFooter>
@@ -128,4 +133,3 @@ export default function LoginPage() {
     </div>
   );
 }
-

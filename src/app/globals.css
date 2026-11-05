@@ -4,48 +4,49 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    /* Palette: Velvet Cake (#AD3029, #CD5252, #CC8780, #FEEFCD) */
+    --background: 30 33% 98%;          /* #FAF7F4 Warm soft cream background */
+    --foreground: 0 20% 15%;           /* #2E1F1E Dark velvet cocoa text */
+    --card: 0 0% 100%;                 /* #FFFFFF Crisp card white */
+    --card-foreground: 0 20% 15%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-    --radius: 0.5rem;
+    --popover-foreground: 0 20% 15%;
+    --primary: 3 62% 42%;              /* #AD3029 Rich Red Velvet */
+    --primary-foreground: 40 100% 97%; /* #FFFDF7 Cream text on primary */
+    --secondary: 41 96% 90%;           /* #FEEFCD Vanilla Custard Cream */
+    --secondary-foreground: 3 65% 28%; /* #7A1914 Deep velvet contrast */
+    --muted: 15 30% 94%;               /* Soft blush tinted cream */
+    --muted-foreground: 6 15% 45%;     /* Muted cocoa gray */
+    --accent: 5 44% 65%;               /* #CC8780 Dusty rose */
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 65% 45%;          /* #BA2A2A Warm crimson */
+    --destructive-foreground: 40 100% 97%;
+    --border: 15 25% 90%;              /* #EFE6E1 Soft warm border */
+    --input: 15 25% 89%;
+    --ring: 3 62% 42%;                 /* Velvet red focus ring */
+    --radius: 0.75rem;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.8 100% 47%;
+    --background: 0 20% 10%;
+    --foreground: 40 30% 95%;
+    --card: 0 18% 13%;
+    --card-foreground: 40 30% 95%;
+    --popover: 0 18% 13%;
+    --popover-foreground: 40 30% 95%;
+    --primary: 3 62% 48%;
+    --primary-foreground: 40 100% 97%;
+    --secondary: 0 20% 20%;
+    --secondary-foreground: 40 30% 95%;
+    --muted: 0 15% 20%;
+    --muted-foreground: 15 15% 65%;
+    --accent: 5 44% 65%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 65% 50%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 15% 22%;
+    --input: 0 15% 22%;
+    --ring: 3 62% 48%;
   }
 }
 
@@ -54,7 +55,7 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
-
