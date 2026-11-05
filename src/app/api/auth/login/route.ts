@@ -60,13 +60,16 @@ export async function POST(request: Request) {
       { status: 200 }
     );
 
+    const host = request.headers.get("host") || "";
+    const isLocalhost = host.includes("localhost") || host.includes("127.0.0.1");
+
     response.cookies.set({
       name: COOKIE_NAME,
       value: token,
       httpOnly: true,
       path: "/",
       sameSite: "lax",
-      secure: process.env.NODE_ENV === "production",
+      secure: process.env.NODE_ENV === "production" && !isLocalhost,
       maxAge: 60 * 60 * 24 * 7,
     });
 

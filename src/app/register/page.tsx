@@ -41,8 +41,8 @@ export default function RegisterPage() {
         throw new Error(data.message || data.error || "Registration failed");
       }
 
-      router.push("/");
-      router.refresh();
+      // Hard redirect to ensure server components & layout re-render with new auth cookie
+      window.location.href = "/";
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);

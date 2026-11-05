@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Navbar } from "@/components/navbar";
 import "./globals.css";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "SDN Project - Red Velvet",
   description: "Next.js App Router with Prisma, Supabase PostgreSQL and Authentication",

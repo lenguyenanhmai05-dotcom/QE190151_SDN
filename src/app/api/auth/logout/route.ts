@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
 import { COOKIE_NAME } from "@/lib/auth";
 
-export async function POST() {
-  const response = NextResponse.json(
-    { message: "Logged out successfully" },
-    { status: 200 }
-  );
+export async function POST(request: Request) {
+  const isHtml = request.headers.get("accept")?.includes("text/html");
+
+  const response = isHtml
+    ? NextResponse.redirect(new URL("/login", request.url))
+    : NextResponse.json({ message: "Logged out successfully" }, { status: 200 });
 
   response.cookies.set({
     name: COOKIE_NAME,
@@ -18,7 +19,6 @@ export async function POST() {
   return response;
 }
 
-export async function GET() {
-  return POST();
+export async function GET(request: Request) {
+  return POST(request);
 }
-

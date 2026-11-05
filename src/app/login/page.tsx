@@ -40,8 +40,8 @@ export default function LoginPage() {
         throw new Error(data.message || data.error || "Login failed");
       }
 
-      router.push("/");
-      router.refresh();
+      // Hard redirect to ensure server components & layout re-render with new auth cookie
+      window.location.href = "/";
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
