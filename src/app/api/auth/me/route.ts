@@ -9,18 +9,23 @@ export async function GET() {
 
     if (!user) {
       return NextResponse.json(
-        { error: "Unauthorized", message: "Not authenticated" },
+        { error: "Unauthorized" },
         { status: 401 }
       );
     }
 
-    return NextResponse.json({ user }, { status: 200 });
+    return NextResponse.json(
+      {
+        id: user.id,
+        email: user.email,
+      },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("Auth me error:", error);
     return NextResponse.json(
-      { error: "Internal server error", message: "Internal server error" },
+      { error: "Internal server error" },
       { status: 500 }
     );
   }
 }
-

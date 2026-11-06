@@ -7,10 +7,10 @@ export async function POST(request: Request) {
     const body = await request.json().catch(() => ({}));
     const { email, password } = body;
 
-    if (!email || !password) {
+    if (!email || !email.trim() || !password) {
       return NextResponse.json(
-        { error: "Email and password are required", message: "Email and password are required" },
-        { status: 400 }
+        { error: "Invalid email or password" },
+        { status: 401 }
       );
     }
 
@@ -22,16 +22,16 @@ export async function POST(request: Request) {
 
     if (!user) {
       return NextResponse.json(
-        { error: "Invalid credentials", message: "Invalid email or password" },
+        { error: "Invalid email or password" },
         { status: 401 }
       );
     }
 
-    const isValidPassword = await verifyPassword(password, user.password);
+    const isValidPassword = await verifyPassword(password, user.passwordHash);
 
     if (!isValidPassword) {
       return NextResponse.json(
-        { error: "Invalid credentials", message: "Invalid email or password" },
+        { error: "Invalid email or password" },
         { status: 401 }
       );
     }
@@ -39,23 +39,12 @@ export async function POST(request: Request) {
     const token = await signToken({
       userId: user.id,
       email: user.email,
-      role: user.role,
-      name: user.name,
     });
-
-    const safeUser = {
-      id: user.id,
-      email: user.email,
-      name: user.name,
-      role: user.role,
-      createdAt: user.createdAt,
-    };
 
     const response = NextResponse.json(
       {
-        message: "Logged in successfully",
-        user: safeUser,
-        token,
+        id: user.id,
+        email: user.email,
       },
       { status: 200 }
     );
@@ -77,9 +66,8 @@ export async function POST(request: Request) {
   } catch (error: unknown) {
     console.error("Login error:", error);
     return NextResponse.json(
-      { error: "Internal server error", message: "Internal server error" },
+      { error: "Internal server error" },
       { status: 500 }
     );
   }
 }
-

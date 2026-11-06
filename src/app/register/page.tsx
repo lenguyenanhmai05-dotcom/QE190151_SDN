@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   Card,
@@ -16,39 +15,73 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 
 export default function RegisterPage() {
-  const router = useRouter();
-  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const [hasSubmitted, setHasSubmitted] = useState(false);
+  const [errorAuth, setErrorAuth] = useState<string | null>(null);
+  const [formSuccess, setFormSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  // Compute live validation errors
+  const getEmailError = (val: string) => {
+    if (!val || !val.trim()) return "Email is required";
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(val.trim())) return "Please enter a valid email address";
+    return "";
+  };
+
+  const getPasswordError = (val: string) => {
+    if (!val) return "Password is required";
+    if (val.length < 6) return "Password must be at least 6 characters";
+    return "";
+  };
+
+  const getConfirmPasswordError = (val: string, pwd: string) => {
+    if (!val) return "Confirm password is required";
+    if (val !== pwd) return "Passwords do not match";
+    return "";
+  };
+
+  const emailError = getEmailError(email);
+  const passwordError = getPasswordError(password);
+  const confirmPasswordError = getConfirmPasswordError(confirmPassword, password);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
+    setHasSubmitted(true);
+    setErrorAuth(null);
+    setFormSuccess(null);
+
+    // If any validation error, do not submit
+    if (emailError || passwordError || confirmPasswordError) {
+      return;
+    }
+
     setLoading(true);
 
     try {
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ email, password, confirmPassword }),
       });
 
       const data = await res.json().catch(() => ({}));
 
       if (!res.ok) {
-        throw new Error(data.message || data.error || "Registration failed");
-      }
-
-      // Hard redirect to ensure server components & layout re-render with new auth cookie
-      window.location.href = "/";
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        setError(err.message);
+        setErrorAuth(data.error || "Registration failed");
       } else {
-        setError("An unexpected error occurred");
+        setFormSuccess("Registration successful");
+        // Clear inputs after success
+        setEmail("");
+        setPassword("");
+        setConfirmPassword("");
+        setHasSubmitted(false);
       }
+    } catch {
+      setErrorAuth("Network error occurred during registration");
     } finally {
       setLoading(false);
     }
@@ -56,90 +89,133 @@ export default function RegisterPage() {
 
   return (
     <div className="flex justify-center items-center py-10">
-      <Card className="w-full max-w-md shadow-md border-border bg-white" data-testid="register-card">
+      <Card className="w-full max-w-md shadow-md border-border bg-white">
         <CardHeader className="space-y-1.5 text-center pb-4">
           <div className="mx-auto w-10 h-10 rounded-xl bg-secondary flex items-center justify-center text-primary font-black text-xl mb-1">
-            V
+            R
           </div>
           <CardTitle className="text-2xl font-bold tracking-tight text-foreground">
-            Đăng ký tài khoản
+            Create an Account
           </CardTitle>
           <CardDescription className="text-xs text-muted-foreground">
-            Tạo tài khoản mới để trải nghiệm đầy đủ chức năng
+            Enter your details to register for ReadLog
           </CardDescription>
         </CardHeader>
-        <form onSubmit={handleSubmit}>
+
+        <form onSubmit={handleSubmit} noValidate data-testid="register-form">
           <CardContent className="space-y-4">
-            {error && (
+            {/* Global API Auth Error */}
+            {errorAuth && (
               <div
                 className="p-3 text-xs rounded-lg bg-red-50 text-destructive border border-red-200 font-medium"
-                data-testid="error-message"
+                data-testid="error-auth"
               >
-                {error}
+                {errorAuth}
               </div>
             )}
+
+            {/* Form Success Message */}
+            {formSuccess && (
+              <div
+                className="p-3 text-xs rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 font-medium"
+                data-testid="form-success"
+              >
+                {formSuccess}
+              </div>
+            )}
+
+            {/* Email Field */}
             <div className="space-y-1.5">
-              <Label htmlFor="name" className="text-xs font-semibold text-foreground">Họ và tên</Label>
-              <Input
-                id="name"
-                name="name"
-                type="text"
-                autoComplete="name"
-                placeholder="Nguyễn Văn A"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="border-input focus-visible:ring-primary h-10 text-sm"
-                data-testid="name-input"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="email" className="text-xs font-semibold text-foreground">Email</Label>
+              <Label htmlFor="email" className="text-xs font-semibold text-foreground">
+                Email
+              </Label>
               <Input
                 id="email"
                 name="email"
                 type="email"
-                autoComplete="email"
                 placeholder="name@example.com"
-                required
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setErrorAuth(null);
+                }}
                 className="border-input focus-visible:ring-primary h-10 text-sm"
-                data-testid="email-input"
+                data-testid="register-email"
               />
+              {hasSubmitted && emailError && (
+                <p className="text-xs text-destructive font-medium mt-1" data-testid="error-email">
+                  {emailError}
+                </p>
+              )}
             </div>
+
+            {/* Password Field */}
             <div className="space-y-1.5">
-              <Label htmlFor="password" className="text-xs font-semibold text-foreground">Mật khẩu</Label>
+              <Label htmlFor="password" className="text-xs font-semibold text-foreground">
+                Password
+              </Label>
               <Input
                 id="password"
                 name="password"
                 type="password"
-                autoComplete="new-password"
                 placeholder="••••••••"
-                required
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setErrorAuth(null);
+                }}
                 className="border-input focus-visible:ring-primary h-10 text-sm"
-                data-testid="password-input"
+                data-testid="register-password"
               />
+              {hasSubmitted && passwordError && (
+                <p className="text-xs text-destructive font-medium mt-1" data-testid="error-password">
+                  {passwordError}
+                </p>
+              )}
+            </div>
+
+            {/* Confirm Password Field */}
+            <div className="space-y-1.5">
+              <Label htmlFor="confirmPassword" className="text-xs font-semibold text-foreground">
+                Confirm Password
+              </Label>
+              <Input
+                id="confirmPassword"
+                name="confirmPassword"
+                type="password"
+                placeholder="••••••••"
+                value={confirmPassword}
+                onChange={(e) => {
+                  setConfirmPassword(e.target.value);
+                  setErrorAuth(null);
+                }}
+                className="border-input focus-visible:ring-primary h-10 text-sm"
+                data-testid="register-confirm-password"
+              />
+              {hasSubmitted && confirmPasswordError && (
+                <p
+                  className="text-xs text-destructive font-medium mt-1"
+                  data-testid="error-confirm-password"
+                >
+                  {confirmPasswordError}
+                </p>
+              )}
             </div>
           </CardContent>
+
           <CardFooter className="flex flex-col space-y-4 pt-2">
             <Button
               type="submit"
               className="w-full bg-primary hover:bg-[#8F2620] text-primary-foreground font-semibold shadow-sm h-10"
               disabled={loading}
-              data-testid="register-button"
+              data-testid="register-submit"
             >
-              {loading ? "Đang tạo tài khoản..." : "Đăng ký ngay"}
+              {loading ? "Registering..." : "Register"}
             </Button>
             <p className="text-xs text-center text-muted-foreground">
-              Đã có tài khoản?{" "}
-              <Link
-                href="/login"
-                className="text-primary font-bold hover:underline"
-                data-testid="login-link"
-              >
-                Đăng nhập tại đây
+              Already have an account?{" "}
+              <Link href="/login" className="text-primary font-bold hover:underline">
+                Login here
               </Link>
             </p>
           </CardFooter>

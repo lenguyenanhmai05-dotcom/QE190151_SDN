@@ -3,7 +3,7 @@ import bcrypt from "bcryptjs";
 import { cookies, headers } from "next/headers";
 import { prisma } from "@/lib/prisma";
 
-export const COOKIE_NAME = "token";
+export const COOKIE_NAME = "session_token";
 
 function getSecretKey() {
   const secret = process.env.AUTH_SECRET;
@@ -19,8 +19,6 @@ function getSecretKey() {
 export interface TokenPayload {
   userId: string;
   email: string;
-  role?: string;
-  name?: string | null;
   [key: string]: unknown;
 }
 
@@ -51,7 +49,7 @@ export async function verifyToken(token: string): Promise<TokenPayload | null> {
   }
 }
 
-export async function getCurrentUser() {
+export async function getCurrentUser(): Promise<{ id: string; email: string } | null> {
   try {
     // 1. Try to read from Cookie
     const cookieStore = cookies();
@@ -82,9 +80,6 @@ export async function getCurrentUser() {
       select: {
         id: true,
         email: true,
-        name: true,
-        role: true,
-        createdAt: true,
       },
     });
 
@@ -102,4 +97,3 @@ export async function getCurrentUser() {
     return null;
   }
 }
-
